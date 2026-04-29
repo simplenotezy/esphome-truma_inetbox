@@ -27,7 +27,7 @@ wifi:
 
   # Fallback hotspot if it can't reach "Network Name"
   ap:
-    ssid: "Fallback Hotspot"
+    ssid: "Truma Heater"
     password: "Sw9g4XJtoyrn"
 
 api:
@@ -269,6 +269,10 @@ select:
   - platform: truma_inetbox
     name: "Energy Mix"
     type: HEATER_ENERGY_MIX_DIESEL
+
+  - platform: truma_inetbox
+    name: "Fan Mode"
+    type: HEATER_FAN_MODE_COMBI
 
   - platform: template
     name: "Electric Power Level"
