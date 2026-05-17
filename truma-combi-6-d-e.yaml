@@ -31,6 +31,7 @@ wifi:
     password: "Sw9g4XJtoyrn"
 
 api:
+  max_connections: 5
 
 ota:
   platform: esphome
@@ -38,6 +39,8 @@ ota:
 
 logger:
   level: DEBUG
+  logs:
+    truma_inetbox.LinBusProtocol: WARN
 
 web_server:
   port: 80
@@ -48,6 +51,12 @@ web_server:
 # ---------------------------------------------------------
 # HARDWARE SECTION
 # ---------------------------------------------------------
+# Confirmed physical wiring (user-verified):
+# - ESP GPIO16 -> LIN board TX
+# - ESP GPIO17 -> LIN board RX
+# - ESP 3V3    -> LIN board SLP
+# - ESP GND    -> LIN board GND
+# Note: FAULT pin is intentionally not connected in this setup.
 uart:
   - id: lin_uart_bus
     tx_pin: 17
@@ -62,7 +71,7 @@ uart:
 # ---------------------------------------------------------
 
 truma_inetbox:
-  debug: false
+  debug: true
   uart_id: lin_uart_bus
   on_heater_message:
     then:
@@ -99,18 +108,18 @@ binary_sensor:
     name: "Heater has error"
     type: HEATER_HAS_ERROR
 
-  - platform: truma_inetbox
-    name: "Timer active"
-    type: TIMER_ACTIVE
-    id: TIMER_ACTIVE
+  # - platform: truma_inetbox
+  #   name: "Timer active"
+  #   type: TIMER_ACTIVE
+  #   id: TIMER_ACTIVE
 
-  - platform: truma_inetbox
-    name: "Timer Room Heater active"
-    type: TIMER_ROOM
+  # - platform: truma_inetbox
+  #   name: "Timer Room Heater active"
+  #   type: TIMER_ROOM
 
-  - platform: truma_inetbox
-    name: "Timer Water Heater active"
-    type: TIMER_WATER
+  # - platform: truma_inetbox
+  #   name: "Timer Water Heater active"
+  #   type: TIMER_WATER
 
 climate:
   - platform: truma_inetbox
@@ -249,21 +258,21 @@ switch:
     turn_off_action:
       - truma_inetbox.heater.set_target_water_temperature_enum: "OFF"
 
-  - platform: template
-    name: "Active Timer"
-    lambda: |-
-      return id(TIMER_ACTIVE).state;
-    turn_on_action:
-      - truma_inetbox.timer.activate:
-          start: 7:00
-          stop: 9:30
-          room_temperature: 13
-          heating_mode: ECO
-          water_temperature: 0
-          energy_mix: GAS # Diesel only
-          watt: 0
-    turn_off_action:
-      - truma_inetbox.timer.disable
+  # - platform: template
+  #   name: "Active Timer"
+  #   lambda: |-
+  #     return id(TIMER_ACTIVE).state;
+  #   turn_on_action:
+  #     - truma_inetbox.timer.activate:
+  #         start: 7:00
+  #         stop: 9:30
+  #         room_temperature: 13
+  #         heating_mode: ECO
+  #         water_temperature: 0
+  #         energy_mix: GAS # Diesel only
+  #         watt: 0
+  #   turn_off_action:
+  #     - truma_inetbox.timer.disable
 
 select:
   - platform: truma_inetbox
